@@ -1,5 +1,5 @@
 from Game import NormalGame
-from Game.Players import RandomPlayer
+from Game.players import RandomPlayer
 from Game.utils import Color
 
 
