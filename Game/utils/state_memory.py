@@ -1,5 +1,5 @@
 from collections import deque
-from ..config import CFG
+from config import CFG
 from .helper import field_to_black, field_to_white
 from ..data.color import Color
 from ..rule import Rule

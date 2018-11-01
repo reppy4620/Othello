@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from Game.config import CFG
+from config import CFG
 from Game.rule import Rule
 
 

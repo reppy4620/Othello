@@ -1,6 +1,6 @@
 from .nnet import DualNet
 from Game.rule import Rule
-from Game.config import CFG
+from config import CFG
 
 import numpy as np
 import torch
