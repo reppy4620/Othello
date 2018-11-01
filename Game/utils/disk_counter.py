@@ -3,13 +3,20 @@ from Game.data.result import Result
 
 
 class DiskCounter:
-    def __init__(self):
-        self._black = 0
-        self._white = 0
+    def __init__(self, clone=False, old=None):
+        if clone:
+            self._black = old._black
+            self._white = old._white
+        else:
+            self._black = 0
+            self._white = 0
 
     def reset(self):
         self._black = 0
         self._white = 0
+
+    def clone(self):
+        return DiskCounter(clone=True, old=self)
 
     def _count(self, color, sign):
         if color == Color.Black:

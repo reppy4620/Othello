@@ -9,13 +9,22 @@ import numpy as np
 
 class StateMemory:
 
-    def __init__(self):
-        self._black_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
-                                   maxlen=CFG.MemoryLength)
-        self._white_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
-                                   maxlen=CFG.MemoryLength)
-        self._idx = 0
-        self._current_player = Rule.StartPlayer
+    def __init__(self, clone=False, old=None):
+        if clone:
+            self._black_memory = deque(old._black_memory)
+            self._white_memory = deque(old._white_memory)
+            self._idx = old._idx
+            self._current_player = old._current_player
+        else:
+            self._black_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
+                                       maxlen=CFG.MemoryLength)
+            self._white_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
+                                       maxlen=CFG.MemoryLength)
+            self._idx = 0
+            self._current_player = Rule.StartPlayer
+
+    def clone(self):
+        return StateMemory(clone=True, old=self)
 
     def push(self, field):
         self._black_memory.append(field_to_black(field))
