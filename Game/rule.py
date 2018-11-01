@@ -1,4 +1,4 @@
-from .utils import Color
+from .data import Color
 
 
 class Rule:

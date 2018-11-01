@@ -3,10 +3,6 @@ from Game.players import RandomPlayer
 from Game.data import Color
 
 
-def play():
+def check():
     game = NormalGame(player1=RandomPlayer(Color.Black), player2=RandomPlayer(Color.White))
-    game.play()
-
-
-if __name__ == '__main__':
-    play()
+    print(game.env.state)

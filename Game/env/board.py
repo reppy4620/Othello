@@ -1,4 +1,5 @@
-from ..utils import Direction, CellState, Position, Color, Result
+from ..data import Direction, CellState, Position, Color
+from ..utils import DiskCounter, StateMemory
 from ..rule import Rule
 
 
@@ -7,8 +8,13 @@ class Board:
     def __init__(self):
         self._field = [[0] * 8 for _ in range(8)]
         self._direction = Direction()
-        self.disks = DiskMemory()
+        self.disks = DiskCounter()
+        self._memory = StateMemory()
         self._initialize()
+
+    @property
+    def state(self):
+        return self._memory.get_state(self._field)
 
     def reset(self):
         self._field = [[0] * 8 for _ in range(8)]
@@ -85,7 +91,9 @@ class Board:
         return True
 
     def display(self):
-        self._separate()
+        def separate():
+            print('-' * (Rule.BoardSize * 4 + 1))
+        separate()
         for row in self._field:
             for cell_state in row:
                 if cell_state == Color.Black:
@@ -95,12 +103,12 @@ class Board:
                 else:
                     print('|   ', end='')
             print('|')
-            self._separate()
+            separate()
         print()
 
-    @staticmethod
-    def _separate():
-        print('-' * (Rule.BoardSize * 4 + 1))
+    @property
+    def field(self):
+        return self._field
 
     @property
     def size(self):
@@ -113,43 +121,3 @@ class Board:
     @property
     def height(self):
         return Rule.BoardSize
-
-
-class DiskMemory:
-    def __init__(self):
-        self._black = 0
-        self._white = 0
-
-    def reset(self):
-        self._black = 0
-        self._white = 0
-
-    def _count(self, color, sign):
-        if color == Color.Black:
-            self._black += sign
-        elif color == Color.White:
-            self._white += sign
-        else:
-            assert color != Color.Empty
-
-    def count(self, color):
-        self._count(color, 1)
-
-    def discount(self, color):
-        self._count(color, -1)
-
-    def compare(self):
-        if self.black > self.white:
-            return Result.BlackWin
-        elif self.black < self.white:
-            return Result.WhiteWin
-        else:
-            return Result.Draw
-
-    @property
-    def black(self):
-        return self._black
-
-    @property
-    def white(self):
-        return self._white

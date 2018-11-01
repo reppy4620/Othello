@@ -1,5 +1,5 @@
 from .env import OthelloEnv
-from .utils import Result
+from .data import Result
 
 
 class NormalGame:
@@ -13,7 +13,7 @@ class NormalGame:
         value = 0
         while not game_over:
             self.env.display()
-            action = self.players[self.env.current_player].action(self.env.state)
+            action = self.players[self.env.current_player].action(self.env.board)
             _, _, game_over, value = self.env.step(action)
         self.env.display()
         if value == Result.BlackWin:

@@ -1,5 +1,6 @@
 from .board import Board
 from ..rule import Rule
+from ..utils import StateMemory
 
 
 class OthelloEnv:
@@ -7,9 +8,10 @@ class OthelloEnv:
     def __init__(self):
         self._board = Board()
         self.current_player = Rule.StartPlayer
+        self.memory = StateMemory()
 
     @property
-    def state(self):
+    def board(self):
         return self._board
 
     def reset(self):
@@ -20,7 +22,8 @@ class OthelloEnv:
         self._board.put(action, self.current_player)
         game_over, value = self.is_game_over()
         self.current_player *= -1
-        return self.state, None, game_over, value
+        self.memory.push(self._board.field)
+        return self.board, None, game_over, value
 
     def is_game_over(self):
         return self._board.check_game_state()
