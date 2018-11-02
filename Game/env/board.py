@@ -11,25 +11,25 @@ class Board:
         if clone:
             self._field = np.array(old._field)
             self._direction = old._direction
-            self.disks = old._disks.clone()
-            self.memory = old._memory.clone()
+            self._disk_counter = old._disk_counter.clone()
+            self._state_memory = old._state_memory.clone()
         else:
             self._field = np.array([[0] * 8 for _ in range(8)])
             self._direction = Direction()
-            self.disks = DiskCounter()
-            self._memory = StateMemory()
+            self._disk_counter = DiskCounter()
+            self._state_memory = StateMemory()
             self._initialize()
 
     @property
     def state(self):
-        return self._memory.get_state(self._field)
+        return self._state_memory.get_state(self._field)
 
     def clone(self):
         return Board(clone=True, old=self)
 
     def reset(self):
         self._field = np.array([[0] * 8 for _ in range(8)])
-        self.disks.reset()
+        self._disk_counter.reset()
         self._initialize()
 
     def _initialize(self):
@@ -40,17 +40,17 @@ class Board:
 
     def put(self, pos, color):
         if self._field[pos.y, pos.x] != CellState.empty:
-            return False
+            return
         flippable = self._get_flippable(pos.x, pos.y, color)
         if len(flippable) == 0:
-            return False
+            return
 
         self._field[pos.y, pos.x] = color
-        self.disks.count(color)
+        self._disk_counter.count(color)
         for x, y in flippable:
             self._field[y, x] = color
-            self.disks.count(color)
-            self.disks.discount(color*-1)
+            self._disk_counter.count(color)
+            self._disk_counter.discount(color * -1)
 
     def _get_flippable(self, x, y, color):
         flippable = list()
@@ -94,7 +94,7 @@ class Board:
     def check_game_state(self):
         is_over = self.is_game_over()
         if is_over:
-            return is_over, self.disks.compare()
+            return is_over, self._disk_counter.compare()
         return is_over, 0
 
     def is_game_over(self):

@@ -17,8 +17,7 @@ class NNetWrapper:
 
         self.optimizer = optim.Adam(self.net.parameters())
 
-        if CFG.IsCuda:
-            self.net.cuda()
+        self.net.cuda()
 
     def train(self, examples):
         print('Start Train')
@@ -51,9 +50,9 @@ class NNetWrapper:
                 batch_idx += 1
 
     def predict(self, board):
-        state = torch.FloatTensor(board.state)
+        state = torch.FloatTensor(board.state).contiguous()
         if CFG.IsCuda:
-            state.contiguous().cuda()
+            state = state.contiguous().cuda()
         with torch.no_grad():
             state = state.view(CFG.NumInput, self.board_x, self.board_y)
 

@@ -1,10 +1,9 @@
-from Game.rule import Rule
-
-
 class CFG:
 
+    BoardSize = 8
+
     MemoryLength = 7
-    ActionSize = Rule.BoardSize * Rule.BoardSize
+    ActionSize = BoardSize * BoardSize
     NumIterations = 10 ** 4
     NumGames = 30
 

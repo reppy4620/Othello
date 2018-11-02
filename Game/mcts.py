@@ -88,7 +88,7 @@ class MontecarloTreeSearch:
             if psa_sum > 0:
                 psa_vector /= psa_sum
 
-            node.expand_node(valid)
+            node.expand(valid, psa_vector)
             game_over, wsa = game.is_game_over()
 
             while node is not None:
@@ -106,6 +106,10 @@ class MontecarloTreeSearch:
             if child.Nsa ** tau > highest_nsa:
                 highest_nsa = child.Nsa ** tau
                 highest_idx = idx
+        try:
+            best_child = self.root.children[highest_idx]
+        except IndexError:
+            pass
 
         return self.root.children[highest_idx]
 
