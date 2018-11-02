@@ -60,9 +60,10 @@ class Train:
                 best_child = mcts.search(game, node, CFG.TempInit)
             else:
                 best_child = mcts.search(game, node, CFG.TempFinal)
-            self_play_data.append([game.board.state,
-                                   best_child.parent.child_psas,
-                                   0])
+            if best_child.action is not None:
+                self_play_data.append([game.board.state,
+                                       best_child.parent.child_psas,
+                                       0])
             action = best_child.action
             game.step(action)
 

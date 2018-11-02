@@ -108,10 +108,9 @@ class MontecarloTreeSearch:
                 highest_idx = idx
         try:
             best_child = self.root.children[highest_idx]
+            return best_child
         except IndexError:
-            pass
-
-        return self.root.children[highest_idx]
+            return TreeNode()
 
     @staticmethod
     def add_dirichlet_noise(psa_vector):

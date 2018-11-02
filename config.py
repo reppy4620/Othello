@@ -25,6 +25,6 @@ class CFG:
     BatchSize = 64
     Cpuct = 1
 
-    NumMCTSSimus = 30
+    NumMCTSSimus = 50
     DirichletAlpha = 0.5
     Epsilon = 0.25

@@ -50,7 +50,8 @@ class NNetWrapper:
                 batch_idx += 1
 
     def predict(self, board):
-        state = torch.FloatTensor(board.state).contiguous()
+        state = board.state
+        state = torch.FloatTensor(state).contiguous()
         if CFG.IsCuda:
             state = state.contiguous().cuda()
         with torch.no_grad():
