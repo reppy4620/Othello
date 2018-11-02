@@ -22,6 +22,7 @@ class OthelloEnv:
 
     def clone(self):
         c = OthelloEnv(clone=True, old=self)
+        return c
 
     def step(self, action):
         self._board.put(action, self.current_player)

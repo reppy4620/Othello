@@ -49,6 +49,7 @@ class Board:
         self.disks.count(color)
         for x, y in flippable:
             self._field[y, x] = color
+            self.disks.count(color)
             self.disks.discount(color*-1)
 
     def _get_flippable(self, x, y, color):
@@ -81,8 +82,10 @@ class Board:
         for x in range(Rule.BoardSize):
             for y in range(Rule.BoardSize):
                 if self._field[y, x] != CellState.empty:
+                    possible.append(None)
                     continue
                 elif len(self._get_flippable(x, y, color)) == 0:
+                    possible.append(None)
                     continue
                 else:
                     possible.append(Position(x, y))
@@ -92,7 +95,7 @@ class Board:
         is_over = self.is_game_over()
         if is_over:
             return is_over, self.disks.compare()
-        return is_over, None
+        return is_over, 0
 
     def is_game_over(self):
         for row in self._field:

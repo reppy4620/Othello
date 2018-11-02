@@ -8,12 +8,12 @@ class DiskCounter:
             self._black = old._black
             self._white = old._white
         else:
-            self._black = 0
-            self._white = 0
+            self._black = 2
+            self._white = 2
 
     def reset(self):
-        self._black = 0
-        self._white = 0
+        self._black = 2
+        self._white = 2
 
     def clone(self):
         return DiskCounter(clone=True, old=self)

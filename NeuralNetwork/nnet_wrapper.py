@@ -2,6 +2,7 @@ from .nnet import DualNet
 from Game.rule import Rule
 from config import CFG
 
+import os
 import numpy as np
 import torch
 import torch.optim as optim
@@ -13,15 +14,14 @@ class NNetWrapper:
         self.net = DualNet()
         self.board_x, self.board_y = Rule.BoardSize, Rule.BoardSize
         self.action_size = CFG.ActionSize
-        self.optimizer = None
+
+        self.optimizer = optim.Adam(self.net.parameters())
 
         if CFG.IsCuda:
             self.net.cuda()
 
     def train(self, examples):
         print('Start Train')
-
-        self.optimizer = optim.Adam(self.net.parameters())
 
         for epoch in range(CFG.NumEpoch):
             print(f'Epoch {epoch+1}')
@@ -51,14 +51,14 @@ class NNetWrapper:
                 batch_idx += 1
 
     def predict(self, board):
-        board = torch.FloatTensor(board)
+        state = torch.FloatTensor(board.state)
         if CFG.IsCuda:
-            board.contiguous().cuda()
+            state.contiguous().cuda()
         with torch.no_grad():
-            board = board.view(CFG.NumInput, self.board_x, self.board_y)
+            state = state.view(CFG.NumInput, self.board_x, self.board_y)
 
             self.net.eval()
-            pi, v = self.net(board)
+            pi, v = self.net(state)
 
         return torch.exp(pi).data.cpu().numpy()[0], v.data.cpu().numpy()[0]
 
@@ -70,8 +70,23 @@ class NNetWrapper:
     def loss_v(outputs, targets):
         return torch.sum((targets - outputs.view(-1)) ** 2) / targets.size()[0]
 
-    def save(self, file_name):
-        pass
+    def save(self, file_name='current_model'):
+        file_path = os.path.join(CFG.ModelDir, file_name+'.pth')
+        try:
+            torch.save({'model': self.net.state_dict(),
+                        'optimizer': self.optimizer.state_dict()}, file_path)
+            print('save model and optimizer successfully')
+        except IOError:
+            print('Cannot save model and optimizer.')
 
-    def load(self, file_name):
-        pass
+    def load(self, file_name='current_model', load_optimizer=False):
+        file_path = os.path.join(CFG.ModelDir, file_name+'pth')
+        try:
+            loads = torch.load(file_path)
+            self.net.load_state_dict(loads['model'])
+            print('Load model successfully.')
+            if load_optimizer:
+                self.optimizer.load_state_dict(loads['optimizer'])
+                print('Load optimizer successfully.')
+        except IOError:
+            print('Cannot load model and optimizer.')
