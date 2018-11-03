@@ -39,7 +39,7 @@ class Board:
             color *= -1
 
     def put(self, pos, color):
-        if self._field[pos.y, pos.x] != CellState.empty or pos is None:
+        if pos is None or self._field[pos.y, pos.x] != CellState.empty:
             return
         flippable = self._get_flippable(pos.x, pos.y, color)
         if len(flippable) == 0:

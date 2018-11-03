@@ -100,11 +100,10 @@ class MontecarloTreeSearch:
         highest_nsa = 0
         highest_idx = 0
 
-        tau = 1 / tau
+        tau_exponent = int(1 / tau)
         for idx, child in enumerate(self.root.children):
-
-            if child.Nsa ** tau > highest_nsa:
-                highest_nsa = child.Nsa ** tau
+            if child.Nsa ** tau_exponent > highest_nsa:
+                highest_nsa = child.Nsa ** tau_exponent
                 highest_idx = idx
         try:
             best_child = self.root.children[highest_idx]
