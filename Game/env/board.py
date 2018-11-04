@@ -74,6 +74,8 @@ class Board:
                     if req == color:
                         if len(tmp) != 0:
                             flippable.extend(tmp)
+                        else:
+                            break
                     else:
                         tmp.append((rx, ry))
                 else:
@@ -114,9 +116,9 @@ class Board:
         for row in self._field:
             for cell_state in row:
                 if cell_state == Color.Black:
-                    print('| ● ', end='')
-                elif cell_state == Color.White:
                     print('| ○ ', end='')
+                elif cell_state == Color.White:
+                    print('| ● ', end='')
                 else:
                     print('|   ', end='')
             print('|')

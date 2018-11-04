@@ -23,6 +23,7 @@ class Evaluate:
             node = TreeNode()
 
             while not game_over:
+                game.display()
                 if game.current_player == Color.Black:
                     best_child = self.trained.search(game, node, CFG.TempFinal)
                 else:

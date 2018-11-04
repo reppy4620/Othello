@@ -9,7 +9,7 @@ class CFG:
 
     IsLoad = True
 
-    NumEvalGames = 10
+    NumEvalGames = 1
     EvalWinRate = 0.55
 
     TempThresh = 10
