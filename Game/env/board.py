@@ -24,7 +24,7 @@ class Board:
 
     @property
     def state(self):
-        return self._state_memory.get_state(self._field, self._current_player)
+        return self._state_memory.get_state(self._current_player)
 
     def clone(self):
         return Board(clone=True, old=self)
@@ -39,13 +39,16 @@ class Board:
         for x, y in Rule.StartPosition:
             self._field[y][x] = color
             color *= -1
+        self._state_memory.push(self._field)
 
     def put(self, pos, color):
         if pos is None or self._field[pos.y, pos.x] != CellState.empty:
-            return
+            self._state_memory.push(self._field)
+            return None, None
         flippable = self._get_flippable(pos.x, pos.y, color)
         if len(flippable) == 0:
-            return
+            self._state_memory.push(self._field)
+            return None, None
 
         self._field[pos.y, pos.x] = color
         self._disk_counter.count(color)
@@ -54,6 +57,8 @@ class Board:
             self._disk_counter.count(color)
             self._disk_counter.discount(color * -1)
         self._current_player *= -1
+        self._state_memory.push(self._field)
+        return pos, flippable
 
     def _get_flippable(self, x, y, color):
         flippable = list()

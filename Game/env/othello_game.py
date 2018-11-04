@@ -25,13 +25,23 @@ class OthelloEnv:
         return c
 
     def step(self, action):
-        self._board.put(action, self.current_player)
-        game_over, value = self.is_game_over()
+        pos, flippable = self._board.put(action, self.current_player)
         self.current_player *= -1
-        return self.board, None, game_over, value
+        return pos, flippable
 
     def is_game_over(self):
         return self._board.check_game_state()
+
+    def is_valid(self, action):
+        flippable = self._board.get_movable(self.current_player)
+        for act in flippable:
+            if act is None:
+                continue
+            if (act.x, act.y) == (action.x, action.y):
+                print('valid')
+                return True
+        print('invalid')
+        return False
 
     def display(self):
         self._board.display()

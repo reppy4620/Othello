@@ -2,7 +2,7 @@ class CFG:
 
     BoardSize = 8
 
-    MemoryLength = 7
+    MemoryLength = 8
     ActionSize = BoardSize * BoardSize
     NumIterations = 10 ** 4
     NumGames = 30

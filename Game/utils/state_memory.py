@@ -40,19 +40,16 @@ class StateMemory:
     def white_memory(self):
         return self._get_memory(Color.White)
 
-    def get_state(self, field, color):
-        now_black = field_to_black(field)
-        now_white = field_to_white(field)
+    def get_state(self, color):
         if color == Color.Black:
-            state = np.array([now_black, now_white,
-                              *self._black_memory, np.ones((Rule.BoardSize, Rule.BoardSize))],
+            state = np.array([*self._black_memory,
+                              np.ones((Rule.BoardSize, Rule.BoardSize))],
                              dtype=np.float32)
         else:
             assert color == Color.White
-            state = np.array([now_white, now_black,
-                              *self._white_memory, np.zeros((Rule.BoardSize, Rule.BoardSize))],
+            state = np.array([*self._white_memory,
+                              np.zeros((Rule.BoardSize, Rule.BoardSize))],
                              dtype=np.float32)
-        self.push(field)
         return state
 
     def __iter__(self):

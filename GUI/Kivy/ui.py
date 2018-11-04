@@ -12,11 +12,15 @@ from kivy.uix.popup import Popup
 from kivy.graphics import Color, Rectangle
 
 from Game.rule import Rule
+from Game import OthelloEnv, TreeNode, MontecarloTreeSearch
+from Game.data import Color, Result, Position
+from NeuralNetwork import NNetWrapper
+from config import CFG
 
 
-black = Image(source='image/black.png').texture
-white = Image(source='image/white.png').texture
-empty = Image(source='image/empty.png').texture
+black = 'image/black.png'
+white = 'image/white.png'
+empty = 'image/empty.png'
 
 
 class OthelloApp(App):
@@ -25,31 +29,70 @@ class OthelloApp(App):
 
 
 class Tile(ButtonBehavior, Image):
-    def __init__(self, source):
+    def __init__(self, source, root, x, y):
         super(Tile, self).__init__(source=source)
+        self.root = root
+        self.action_x, self.action_y = x, y
 
     def on_press(self):
-        self.source = 'image/black.png'
-        self.reload()
+        action = Position(self.action_x, self.action_y)
+        self.root.step(action)
 
 
 class Gui(BoxLayout):
     grid = ObjectProperty(None)
 
     def __init__(self, **kwargs):
+        self.env = OthelloEnv()
+        self.net = NNetWrapper()
+        self.net.load('best_model')
+        self.mcts = MontecarloTreeSearch(self.net)
+        self.node = TreeNode()
+        self.game_over = False
+        self.value = 0
         super(Gui, self).__init__(**kwargs)
-        self.tiles = list()
+        self.tiles = [list() for _ in range(Rule.BoardSize)]
         for y in range(Rule.BoardSize):
-            self.tiles.append(list())
             for x in range(Rule.BoardSize):
                 if (x, y) in Rule.Black:
-                    im = Tile(source='image/black.png')
+                    im = Tile(black, self, x, y)
                 elif (x, y) in Rule.White:
-                    im = Tile(source='image/white.png')
+                    im = Tile(white, self, x, y)
                 else:
-                    im = Tile(source='image/empty.png')
+                    im = Tile(empty, self, x, y)
                 self.tiles[y].append(im)
                 self.grid.add_widget(im)
+
+    def check_game_over(self):
+        game_over, value = self.env.is_game_over()
+        if game_over:
+            if value == Result.BlackWin:
+                print('Win black')
+            elif value == Result.WhiteWin:
+                print('Win white')
+            else:
+                assert value == Result.Draw
+                print('Draw')
+
+    def step(self, action):
+        if self.env.is_valid(action):
+            pos, flippable = self.env.step(action)
+            if pos is not None:
+                self.check_game_over()
+                self.tiles[pos.y][pos.x].source = black if self.env.current_player == Color.White else white
+                for x, y in flippable:
+                    self.tiles[y][x].source = black if self.env.current_player == Color.White else white
+            best_child = self.mcts.search(self.env, TreeNode(), CFG.TempFinal)
+            action = best_child.action
+            # best_child.parent = None
+            # self.node = best_child
+            pos, flippable = self.env.step(action)
+            if pos is not None:
+                self.check_game_over()
+                self.tiles[pos.y][pos.x].source = black if self.env.current_player == Color.White else white
+                for x, y in flippable:
+                    self.tiles[y][x].source = black if self.env.current_player == Color.White else white
+                self.check_game_over()
 
 
 if __name__ == '__main__':
