@@ -13,16 +13,18 @@ class Board:
             self._direction = old._direction
             self._disk_counter = old._disk_counter.clone()
             self._state_memory = old._state_memory.clone()
+            self._current_player = old._current_player
         else:
             self._field = np.array([[0] * 8 for _ in range(8)])
             self._direction = Direction()
             self._disk_counter = DiskCounter()
             self._state_memory = StateMemory()
+            self._current_player = Rule.StartPlayer
             self._initialize()
 
     @property
     def state(self):
-        return self._state_memory.get_state(self._field)
+        return self._state_memory.get_state(self._field, self._current_player)
 
     def clone(self):
         return Board(clone=True, old=self)
@@ -51,6 +53,7 @@ class Board:
             self._field[y, x] = color
             self._disk_counter.count(color)
             self._disk_counter.discount(color * -1)
+        self._current_player *= -1
 
     def _get_flippable(self, x, y, color):
         flippable = list()

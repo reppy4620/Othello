@@ -11,26 +11,26 @@ class StateMemory:
 
     def __init__(self, clone=False, old=None):
         if clone:
-            self._black_memory = deque(old._black_memory)
-            self._white_memory = deque(old._white_memory)
-            self._current_player = old._current_player
+            self._black_memory = deque(old._black_memory, maxlen=CFG.MemoryLength*2)
+            self._white_memory = deque(old._white_memory, maxlen=CFG.MemoryLength*2)
         else:
-            self._black_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
-                                       maxlen=CFG.MemoryLength)
-            self._white_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength)],
-                                       maxlen=CFG.MemoryLength)
-            self._current_player = Rule.StartPlayer
+            self._black_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength*2)],
+                                       maxlen=CFG.MemoryLength*2)
+            self._white_memory = deque([np.zeros((Rule.BoardSize, Rule.BoardSize)) for _ in range(CFG.MemoryLength*2)],
+                                       maxlen=CFG.MemoryLength*2)
 
     def clone(self):
         return StateMemory(clone=True, old=self)
 
     def push(self, field):
-        self._black_memory.append(field_to_black(field))
-        self._white_memory.append(field_to_white(field))
+        self._black_memory.appendleft(field_to_white(field))
+        self._black_memory.appendleft(field_to_black(field))
+        self._white_memory.appendleft(field_to_black(field))
+        self._white_memory.appendleft(field_to_white(field))
 
     def _get_memory(self, color):
         memory = self._black_memory if color == Color.Black else self._white_memory
-        return np.array(list(reversed(memory)))
+        return np.array(memory)
 
     @property
     def black_memory(self):
@@ -40,17 +40,20 @@ class StateMemory:
     def white_memory(self):
         return self._get_memory(Color.White)
 
-    def get_state(self, field):
+    def get_state(self, field, color):
         now_black = field_to_black(field)
         now_white = field_to_white(field)
-        color_state = np.ones((Rule.BoardSize, Rule.BoardSize)) if self._current_player == Color.Black else\
-            np.zeros((Rule.BoardSize, Rule.BoardSize))
-        self._current_player *= -1
-        result = np.array([now_black, now_white,
-                           *self.black_memory, *self.white_memory,
-                           color_state], dtype=np.float32)
+        if color == Color.Black:
+            state = np.array([now_black, now_white,
+                              *self._black_memory, np.ones((Rule.BoardSize, Rule.BoardSize))],
+                             dtype=np.float32)
+        else:
+            assert color == Color.White
+            state = np.array([now_white, now_black,
+                              *self._white_memory, np.zeros((Rule.BoardSize, Rule.BoardSize))],
+                             dtype=np.float32)
         self.push(field)
-        return result
+        return state
 
     def __iter__(self):
         return iter(self._black_memory)

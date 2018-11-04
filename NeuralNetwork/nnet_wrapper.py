@@ -75,18 +75,18 @@ class NNetWrapper:
         try:
             torch.save({'model': self.net.state_dict(),
                         'optimizer': self.optimizer.state_dict()}, file_path)
-            print('save model and optimizer successfully')
+            print('save models and optimizer successfully')
         except IOError:
-            print('Cannot save model and optimizer.')
+            print('Cannot save models and optimizer.')
 
     def load(self, file_name='current_model', load_optimizer=False):
-        file_path = os.path.join(CFG.ModelDir, file_name+'pth')
+        file_path = os.path.join(CFG.ModelDir, file_name+'.pth')
         try:
             loads = torch.load(file_path)
             self.net.load_state_dict(loads['model'])
-            print('Load model successfully.')
+            print('Load models successfully.')
             if load_optimizer:
                 self.optimizer.load_state_dict(loads['optimizer'])
                 print('Load optimizer successfully.')
         except IOError:
-            print('Cannot load model and optimizer.')
+            print('Cannot load models and optimizer.')

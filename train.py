@@ -40,10 +40,10 @@ class Train:
             print(f'win rate : {win_rate}')
 
             if win_rate > CFG.EvalWinRate:
-                print('New model saved as best model.')
+                print('New models saved as best models.')
                 self.net.save('best_model')
             else:
-                print('New model discarded and previous model loaded.')
+                print('New models discarded and previous models loaded.')
                 self.net.load()
 
     def play_game(self, training_data):

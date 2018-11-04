@@ -7,7 +7,7 @@ class CFG:
     NumIterations = 10 ** 4
     NumGames = 30
 
-    IsLoad = False
+    IsLoad = True
 
     NumEvalGames = 10
     EvalWinRate = 0.55
@@ -21,10 +21,10 @@ class CFG:
     NumInput = 17
     NumBlock = 19
     IsCuda = True
-    NumEpoch = 100
+    NumEpoch = 20
     BatchSize = 64
-    Cpuct = 1
 
     NumMCTSSimus = 50
     DirichletAlpha = 0.5
     Epsilon = 0.25
+    Cpuct = 1
