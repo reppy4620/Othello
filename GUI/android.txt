@@ -1,3 +1,0 @@
-title=Reversi-Othelo
-author=Mathieu KOLB
-orientation=portrait
