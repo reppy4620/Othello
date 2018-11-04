@@ -30,6 +30,7 @@ class Tile(ButtonBehavior, Image):
 
     def on_press(self):
         self.source = 'image/black.png'
+        self.reload()
 
 
 class Gui(BoxLayout):
