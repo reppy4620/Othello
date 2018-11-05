@@ -1,16 +1,9 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
-from kivy.uix.label import Label
-from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
-from kivy.config import Config
-from kivy.uix.popup import Popup
-from kivy.graphics import Color, Rectangle
-
 from Game.rule import Rule
 from Game import OthelloEnv, TreeNode, MontecarloTreeSearch
 from Game.data import Color, Result, Position
@@ -75,17 +68,19 @@ class Gui(BoxLayout):
                 print('Draw')
 
     def step(self, action):
-        if self.env.is_valid(action):
-            pos, flippable = self.env.step(action)
-            if pos is not None:
-                self.check_game_over()
-                self.tiles[pos.y][pos.x].source = black if self.env.current_player == Color.White else white
-                for x, y in flippable:
-                    self.tiles[y][x].source = black if self.env.current_player == Color.White else white
+        movable = self.env.board.get_movable(Color.Black)
+        if len(movable) != 0:
+            if self.env.is_valid(action):
+                pos, flippable = self.env.step(action)
+                if pos is not None:
+                    self.check_game_over()
+                    self.tiles[pos.y][pos.x].source = black if self.env.current_player == Color.White else white
+                    for x, y in flippable:
+                        self.tiles[y][x].source = black if self.env.current_player == Color.White else white
+        movable = self.env.board.get_movable(Color.White)
+        if len(movable) != 0:
             best_child = self.mcts.search(self.env, TreeNode(), CFG.TempFinal)
             action = best_child.action
-            # best_child.parent = None
-            # self.node = best_child
             pos, flippable = self.env.step(action)
             if pos is not None:
                 self.check_game_over()

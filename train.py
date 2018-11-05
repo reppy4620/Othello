@@ -56,7 +56,6 @@ class Train:
 
         node = TreeNode()
         while not game_over:
-            game.display()
             if count < CFG.TempThresh:
                 best_child = mcts.search(game, node, CFG.TempInit)
             else:
@@ -72,7 +71,6 @@ class Train:
 
             best_child.parent = None
             node = best_child
-        game.display()
 
         for data in self_play_data:
             value = -value
