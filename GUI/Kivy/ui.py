@@ -11,9 +11,9 @@ from NeuralNetwork import NNetWrapper
 from config import CFG
 
 
-black = 'image/black.png'
-white = 'image/white.png'
-empty = 'image/empty.png'
+black = 'GUI/Kivy/image/black.png'
+white = 'GUI/Kivy/image/white.png'
+empty = 'GUI/Kivy/image/empty.png'
 
 
 class OthelloApp(App):
